@@ -4,6 +4,10 @@
 
 A Neovim plugin that bridges the gap between developer intent and implementation using LLMs. Write at the "vibe level" - describe what you want or implement what you need, and let AI handle the rest.
 
+**How is this Different?** This tool is not for prompting. Instead you write code! Either normal high-level code (python) OR vibe-level code (code in natural language) - and Ai will fill up the missing level. 
+
+**Intended use** You either write the vibe-level or python code of your function, whichever is shorter. This helps the programmer / developer to stay sharp as they do not rely on Ai to make code for them, but instead uses Ai to an additional level of coding (the vibe level ).
+
 ## ✨ Features
 
 - **Docstring → Implementation**: Write a docstring with `...` parameters, get complete function
