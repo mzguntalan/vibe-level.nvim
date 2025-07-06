@@ -39,3 +39,22 @@ luac.out
 *.x86_64
 *.hex
 
+# Vim files
+*.swp
+*.swo
+*~
+
+# Neovim
+.nvimrc
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+test/output/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
