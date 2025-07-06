@@ -1,6 +1,3 @@
--- vibe-level.nvim - A level above high-level programming
--- File: lua/vibe-level/init.lua
-
 local M = {}
 
 -- Default configuration
@@ -188,7 +185,7 @@ Generate ONLY the complete function definition with proper parameters and body. 
     local func_line = parsed.lines[parsed.function_start]
     
     local body_lines = {}
-    for i = parsed.body_start, #lines do
+    for i = parsed.body_start, #parsed.lines do
       table.insert(body_lines, parsed.lines[i])
     end
     local body = table.concat(body_lines, "\n")
