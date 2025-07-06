@@ -181,7 +181,7 @@ Function signature: %s
 Docstring:
 %s
 
-Generate ONLY the complete function definition with proper parameters and body. Do not include any explanations.]], signature, docstring)
+Generate ONLY the complete function definition with proper parameters and body. Do not include any explanations, markdown formatting, or code fences. Output raw Python code only.]], signature, docstring)
     
   elseif case_type == "body_only" then
     -- Case 2: Only body provided, need to generate docstring
@@ -200,7 +200,7 @@ Function:
 %s
 %s
 
-Generate ONLY the docstring in triple quotes format. Include description, parameters, return value, and any relevant examples. Do not include the function definition.]], func_line, body)
+Generate ONLY the docstring in triple quotes format. Include description, parameters, return value, and any relevant examples. Do not include the function definition, explanations, or markdown formatting. Output raw Python docstring only.]], func_line, body)
   end
   
   return query_ollama(prompt)
