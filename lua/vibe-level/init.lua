@@ -6,6 +6,7 @@ local config = {
   model_name = os.getenv("OLLAMA_MODEL_VIBE_LEVEL") or "llama2",
   keybind = "<leader>zv",
   timeout = 30000, -- 30 seconds
+  context = "FUNC_LEVEL", -- "FUNC_LEVEL" or "FILE_LEVEL"
 }
 
 -- HTTP client using curl
@@ -154,7 +155,7 @@ local function is_empty_body(lines, start_idx)
 end
 
 -- Generate completion based on context
-local function generate_completion(parsed, case_type)
+local function generate_completion(parsed, case_type, full_file_lines, current_func_start)
   local prompt = ""
   
   if case_type == "docstring_only" then
@@ -168,7 +169,29 @@ local function generate_completion(parsed, case_type)
     end
     local docstring = table.concat(docstring_lines, "\n")
     
-    prompt = string.format([[
+    if config.context == "FILE_LEVEL" then
+      local file_context = table.concat(full_file_lines, "\n")
+      prompt = string.format([[
+You are a Python code generator. Here's the full file for context:
+
+%s
+
+Focus on the function starting at line %d. Given the function signature with ellipsis parameters and docstring, complete the function by:
+1. Using existing functions, classes, and imports from the file when appropriate
+2. Replacing ellipsis (...) in parameters with proper parameter names and type annotations
+3. Keeping any existing fixed parameters unchanged
+4. Implementing the function body based on the docstring
+5. Following the coding style and patterns used in the file
+
+Function signature: %s
+Docstring:
+%s
+
+Generate ONLY the complete function definition with proper parameters and body. Do not include any explanations, markdown formatting, or code fences. Output raw Python code only.]], 
+        file_context, current_func_start, signature, docstring)
+    else
+      -- FUNC_LEVEL context (original behavior)
+      prompt = string.format([[
 You are a Python code generator. Given a function signature with ellipsis parameters and a docstring, complete the function by:
 1. Replacing ellipsis (...) in parameters with proper parameter names and type annotations
 2. Keeping any existing fixed parameters unchanged
@@ -179,6 +202,7 @@ Docstring:
 %s
 
 Generate ONLY the complete function definition with proper parameters and body. Do not include any explanations, markdown formatting, or code fences. Output raw Python code only.]], signature, docstring)
+    end
     
   elseif case_type == "body_only" then
     -- Case 2: Only body provided, need to generate docstring
@@ -190,7 +214,29 @@ Generate ONLY the complete function definition with proper parameters and body. 
     end
     local body = table.concat(body_lines, "\n")
     
-    prompt = string.format([[
+    if config.context == "FILE_LEVEL" then
+      local file_context = table.concat(full_file_lines, "\n")
+      prompt = string.format([[
+You are a Python documentation generator. Here's the full file for context:
+
+%s
+
+Focus on the function starting at line %d. Given the function implementation, generate a comprehensive docstring that:
+1. Describes what the function does in relation to other functions in the file
+2. Documents all parameters with their types
+3. Documents the return value and its type
+4. Includes any relevant examples or usage notes
+5. Follows the docstring style used in the file
+
+Function:
+%s
+%s
+
+Generate ONLY the docstring in triple quotes format. Do not include the function definition, explanations, or markdown formatting. Output raw Python docstring only.]], 
+        file_context, current_func_start, func_line, body)
+    else
+      -- FUNC_LEVEL context (original behavior)
+      prompt = string.format([[
 You are a Python documentation generator. Given a function with its implementation, generate a comprehensive docstring.
 
 Function:
@@ -198,6 +244,7 @@ Function:
 %s
 
 Generate ONLY the docstring in triple quotes format. Include description, parameters, return value, and any relevant examples. Do not include the function definition, explanations, or markdown formatting. Output raw Python docstring only.]], func_line, body)
+    end
   end
   
   return query_ollama(prompt)
@@ -284,7 +331,7 @@ local function vibe_level_complete()
   vim.notify("Generating vibe level completion...", vim.log.levels.INFO)
   
   -- Generate completion
-  local completion, err = generate_completion(parsed, case_type)
+  local completion, err = generate_completion(parsed, case_type, lines, func_start)
   if err then
     vim.notify("Error generating completion: " .. err, vim.log.levels.ERROR)
     return

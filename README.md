@@ -23,7 +23,7 @@ A Neovim plugin that bridges the gap between developer intent and implementation
 
 ```lua
 {
-    'yourusername/vibe-level.nvim',
+    'mzguntalan/vibe-level.nvim',
     config = function()
         require('vibe-level').setup({
             ollama_url = "http://localhost:11434",
@@ -37,7 +37,7 @@ A Neovim plugin that bridges the gap between developer intent and implementation
 
 ```lua
 use {
-    'yourusername/vibe-level.nvim',
+    'mzguntalan/vibe-level.nvim',
     config = function()
         require('vibe-level').setup()
     end
@@ -51,7 +51,8 @@ require('vibe-level').setup({
     ollama_url = "http://localhost:11434",    -- Ollama server URL
     model_name = "llama2",                    -- Model to use
     keybind = "<leader>zv",                   -- Trigger keybind
-    timeout = 30000                           -- Request timeout (ms)
+    timeout = 30000,                          -- Request timeout (ms)
+    context = "FILE_LEVEL"                    -- FILE_LEVEL or FUNC_LEVEL
 })
 ```
 
@@ -65,5 +66,3 @@ require('vibe-level').setup({
 - Place cursor inside a Python function
 - Press `<leader>zv` or run `:VibeLevel`
 - Magic happens! ✨
-
-... Under construction
