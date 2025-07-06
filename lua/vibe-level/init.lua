@@ -288,11 +288,19 @@ local function vibe_level_complete()
   func_end = #lines
   for i = func_start + 1, #lines do
     local line = lines[i]
+    -- Only end function on new function/class definitions or decorators
     if line:match("^%s*def%s+") or line:match("^%s*class%s+") or 
-       line:match("^%s*async%s+def%s+") or
-       (line:match("^%S") and line:trim() ~= "") then
+       line:match("^%s*async%s+def%s+") or line:match("^%s*@") then
       func_end = i - 1
       break
+    -- Also end on non-indented non-empty lines, but be more careful
+    elseif line:match("^%S") and line:trim() ~= "" and not line:match("^#") then
+      -- Check if this looks like it's outside the function
+      -- Only break if it's not a string, comment, or continuation
+      if not line:match("^[\"']") then
+        func_end = i - 1
+        break
+      end
     end
   end
   
