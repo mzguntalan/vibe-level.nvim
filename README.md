@@ -8,6 +8,8 @@ A Neovim plugin that bridges the gap between developer intent and implementation
 
 **Intended use** You either write the vibe-level or python code of your function, whichever is shorter. This helps the programmer / developer to stay sharp as they do not rely on Ai to make code for them, but instead uses Ai to an additional level of coding (the vibe level ).
 
+▶️ [Watch Vibe Level Demo](https://github.com/mzguntalan/media_for_other_repo/raw/refs/heads/main/vibe_level/vibe_level_demo.mp4)
+
 ## ✨ Features
 
 - **Docstring → Implementation**: Write a docstring with `...` parameters, get complete function
